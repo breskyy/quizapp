@@ -62,13 +62,13 @@ document.getElementById('next-question-btn').addEventListener('click', () => {
             showResults();
         }
     } else {
-        alert('Please select an answer!');
+        alert('Proszę wybrać odpowiedź!');
     }
 });
 
 function showResults() {
     const quizContainer = document.getElementById('quiz-container');
-    quizContainer.innerHTML = '<h2>Quiz Results</h2>';
+    quizContainer.innerHTML = '<h2>Podsumowanie</h2>';
     let correctAnswersCount = 0;
 
     drawnQuestions.forEach((question, index) => {
@@ -134,7 +134,7 @@ function showReview() {
 
         for (let i = startIndex; i < endIndex; i++) {
             const questionElement = document.createElement('h3');
-            questionElement.textContent = `Question ${i + 1}: ${questions[i].question}`;
+            questionElement.textContent = `Pytanie nr ${i + 1}: ${questions[i].question}`;
             quizContainer.appendChild(questionElement);
 
             questions[i].options.forEach((option, index) => {
