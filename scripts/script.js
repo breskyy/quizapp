@@ -1,232 +1,239 @@
-// Lista pytań (dodano dodatkowe 5 pytań)
-const questions = [
-    { question: "What is the capital of France?", options: ["Berlin", "Madrid", "Paris", "Rome"], correctAnswer: 2 },
-    { question: "What is 2 + 2?", options: ["3", "4", "5", "6"], correctAnswer: 1 },
-    { question: "Who wrote 'Hamlet'?", options: ["Shakespeare", "Dickens", "Hemingway", "Orwell"], correctAnswer: 0 },
-    { question: "What is the speed of light?", options: ["300,000 km/s", "150,000 km/s", "450,000 km/s", "600,000 km/s"], correctAnswer: 0 },
-    { question: "What is the largest planet in the Solar System?", options: ["Earth", "Mars", "Jupiter", "Saturn"], correctAnswer: 2 },
-    { question: "What is the chemical symbol for water?", options: ["H2O", "O2", "CO2", "HO"], correctAnswer: 0 },
-    { question: "In which year did World War II end?", options: ["1939", "1945", "1918", "1965"], correctAnswer: 1 },
-    { question: "Who painted the Mona Lisa?", options: ["Van Gogh", "Da Vinci", "Picasso", "Michelangelo"], correctAnswer: 1 },
-    { question: "What is the smallest prime number?", options: ["0", "1", "2", "3"], correctAnswer: 2 },
-    { question: "Which planet is closest to the Sun?", options: ["Earth", "Venus", "Mercury", "Mars"], correctAnswer: 2 }
-];
+// Lista przykładowych pytań
+        const questions = [
+            { question: "What is the capital of France?", options: ["Berlin", "Madrid", "Paris", "Rome"], correctAnswer: 2 },
+            { question: "What is 2 + 2?", options: ["3", "4", "5", "6"], correctAnswer: 1 },
+            { question: "Who wrote 'Hamlet'?", options: ["Shakespeare", "Dickens", "Hemingway", "Orwell"], correctAnswer: 0 },
+            { question: "What is the speed of light?", options: ["300,000 km/s", "150,000 km/s", "450,000 km/s", "600,000 km/s"], correctAnswer: 0 },
+            { question: "What is the largest planet in the Solar System?", options: ["Earth", "Mars", "Jupiter", "Saturn"], correctAnswer: 2 },
+            { question: "What is the chemical symbol for water?", options: ["H2O", "O2", "CO2", "HO"], correctAnswer: 0 },
+            { question: "In which year did World War II end?", options: ["1939", "1945", "1918", "1965"], correctAnswer: 1 },
+            { question: "Who painted the Mona Lisa?", options: ["Van Gogh", "Da Vinci", "Picasso", "Michelangelo"], correctAnswer: 1 },
+            { question: "What is the smallest prime number?", options: ["0", "1", "2", "3"], correctAnswer: 2 },
+            { question: "Which planet is closest to the Sun?", options: ["Earth", "Venus", "Mercury", "Mars"], correctAnswer: 2 }
+        ];
 
-let currentQuestionIndex = 0;
-let userAnswers = [];
-let drawnQuestions = [];
 
-function drawQuestions(numberOfQuestions) {
-    const shuffled = [...questions].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, numberOfQuestions);
-}
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let drawnQuestions = [];
+        let allUserAnswers = [];
+        let remainingQuestions = [...questions];
+        let currentSet = 1;
+        let totalSets = 1;
+        let questionsPerSet = 1;
+        let totalQuestions = questions.length;
+        let isContinuousMode = false;
+        let quizCompleted = false;
 
-function showQuestion(questionIndex) {
-    const quizContainer = document.getElementById('quiz-container');
-    quizContainer.innerHTML = '';
-
-    const questionData = drawnQuestions[questionIndex];
-    const questionElement = document.createElement('h2');
-    questionElement.textContent = `Question ${questionIndex + 1}: ${questionData.question}`;
-    quizContainer.appendChild(questionElement);
-
-    questionData.options.forEach((option, index) => {
-        const optionElement = document.createElement('div');
-
-        const radioButton = document.createElement('input');
-        radioButton.type = 'radio';
-        radioButton.name = 'answer';
-        radioButton.value = index;
-        radioButton.id = `option${index}`;
-
-        const label = document.createElement('label');
-        label.htmlFor = `option${index}`;
-        label.textContent = option;
-
-        optionElement.appendChild(radioButton);
-        optionElement.appendChild(label);
-
-        quizContainer.appendChild(optionElement);
-    });
-}
-
-document.getElementById('next-question-btn').addEventListener('click', () => {
-    const selectedOption = document.querySelector('input[name="answer"]:checked');
-    if (selectedOption) {
-        userAnswers.push(parseInt(selectedOption.value));
-        currentQuestionIndex++;
-
-        if (currentQuestionIndex < drawnQuestions.length) {
-            showQuestion(currentQuestionIndex);
-        } else {
-            showResults();
+        function drawQuestions(numberOfQuestions) {
+            const shuffled = [...remainingQuestions].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, numberOfQuestions);
         }
-    } else {
-        alert('Proszę wybrać odpowiedź!');
-    }
-});
 
-function showResults() {
-    const quizContainer = document.getElementById('quiz-container');
-    quizContainer.innerHTML = '<h2>Podsumowanie</h2>';
-    let correctAnswersCount = 0;
+        function showQuestion(questionIndex) {
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = '';
 
-    drawnQuestions.forEach((question, index) => {
-        const resultElement = document.createElement('div');
-        resultElement.innerHTML = `<strong>Question ${index + 1}:</strong> ${question.question}<br>`;
-
-        question.options.forEach((option, i) => {
-            const isCorrect = i === question.correctAnswer;
-            const userAnswer = userAnswers[index] === i;
-            let optionText = `${i + 1}: ${option}`;
-
-            const optionSpan = document.createElement('span');
-            optionSpan.textContent = optionText;
-
-            if (userAnswer && isCorrect) {
-                optionSpan.classList.add('correct');
-                correctAnswersCount++;
-            } else if (userAnswer) {
-                optionSpan.classList.add('incorrect');
+            if (isContinuousMode) {
+                const setIndicator = document.createElement('div');
+                setIndicator.classList.add('set-number');
+                setIndicator.textContent = `Zestaw ${currentSet}/${totalSets}`;
+                quizContainer.appendChild(setIndicator);
             }
 
-            if (isCorrect) {
-                optionSpan.classList.add('correct');
-            }
-
-            resultElement.appendChild(optionSpan);
-            resultElement.innerHTML += '<br>';
-        });
-
-        quizContainer.appendChild(resultElement);
-    });
-
-    const resultContainer = document.createElement('div');
-    resultContainer.classList.add('result-container');
-    const scorePercentage = (correctAnswersCount / drawnQuestions.length) * 100;
-    resultContainer.innerHTML = `Twój wynik: ${correctAnswersCount}/${drawnQuestions.length} (${scorePercentage.toFixed(2)}%)`;
-    quizContainer.appendChild(resultContainer);
-
-    const retryButton = document.createElement('button');
-    retryButton.textContent = "Spróbuj jeszcze raz";
-    retryButton.addEventListener('click', resetQuiz);
-
-    const backButton = document.createElement('button');
-    backButton.textContent = "Powrót do menu";
-    backButton.addEventListener('click', resetToMenu);
-
-    quizContainer.appendChild(retryButton);
-    quizContainer.appendChild(backButton);
-
-    document.getElementById('next-question-btn').style.display = "none";
-}
-
-function showReview() {
-    const quizContainer = document.getElementById('quiz-container');
-    quizContainer.innerHTML = '';
-    let currentPage = 0;
-    const questionsPerPage = 5;
-
-    function displayPage(page) {
-        quizContainer.innerHTML = '';
-        const startIndex = page * questionsPerPage;
-        const endIndex = Math.min(startIndex + questionsPerPage, questions.length);
-
-        for (let i = startIndex; i < endIndex; i++) {
-            const questionElement = document.createElement('h3');
-            questionElement.textContent = `Pytanie nr ${i + 1}: ${questions[i].question}`;
+            const questionData = drawnQuestions[questionIndex];
+            const questionElement = document.createElement('h2');
+            questionElement.textContent = `Question ${questionIndex + 1}: ${questionData.question}`;
             quizContainer.appendChild(questionElement);
 
-            questions[i].options.forEach((option, index) => {
-                const answerElement = document.createElement('div');
-                const isCorrect = index === questions[i].correctAnswer;
-                answerElement.textContent = `${index + 1}: ${option}`;
-                if (isCorrect) {
-                    answerElement.classList.add('correct');
-                }
-                quizContainer.appendChild(answerElement);
+            questionData.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
+
+                const radioButton = document.createElement('input');
+                radioButton.type = 'radio';
+                radioButton.name = 'answer';
+                radioButton.value = index;
+                radioButton.id = `option${index}`;
+
+                const label = document.createElement('label');
+                label.htmlFor = `option${index}`;
+                label.textContent = option;
+
+                optionElement.appendChild(radioButton);
+                optionElement.appendChild(label);
+
+                quizContainer.appendChild(optionElement);
             });
         }
 
-        const paginationContainer = document.createElement('div');
-        paginationContainer.id = "pagination";
+        // Następne pytanie
+        document.getElementById('next-question-btn').addEventListener('click', () => {
+            const selectedOption = document.querySelector('input[name="answer"]:checked');
+            if (selectedOption) {
+                userAnswers.push(parseInt(selectedOption.value));
+                currentQuestionIndex++;
 
-        const prevButton = document.createElement('button');
-        prevButton.textContent = "<< Poprzednia strona";
-        prevButton.disabled = page === 0;
-        prevButton.addEventListener('click', () => {
-            if (page > 0) {
-                displayPage(page - 1);
+                if (currentQuestionIndex < drawnQuestions.length) {
+                    showQuestion(currentQuestionIndex);
+                } else {
+                    allUserAnswers = allUserAnswers.concat(userAnswers);
+                    remainingQuestions = remainingQuestions.filter(q => !drawnQuestions.includes(q));
+                    showSetResults();
+                }
+            } else {
+                alert('Please select an answer!');
             }
         });
 
-        const nextButton = document.createElement('button');
-        nextButton.textContent = "Następna strona >>";
-        nextButton.disabled = endIndex >= questions.length;
-        nextButton.addEventListener('click', () => {
-            if (endIndex < questions.length) {
-                displayPage(page + 1);
+        function showSetResults() {
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = '<h2>Podsumowanie zestawu</h2>';
+            let correctAnswersCount = 0;
+
+            drawnQuestions.forEach((question, index) => {
+                const resultElement = document.createElement('div');
+                resultElement.innerHTML = `<strong>Question ${index + 1}:</strong> ${question.question}<br>`;
+
+                question.options.forEach((option, i) => {
+                    const isCorrect = i === question.correctAnswer;
+                    const userAnswer = userAnswers[index] === i;
+                    let optionText = `${i + 1}: ${option}`;
+
+                    const optionSpan = document.createElement('span');
+                    optionSpan.textContent = optionText;
+
+                    if (userAnswer && isCorrect) {
+                        optionSpan.classList.add('correct');
+                        correctAnswersCount++;
+                    } else if (userAnswer) {
+                        optionSpan.classList.add('incorrect');
+                    }
+
+                    if (isCorrect) {
+                        optionSpan.classList.add('correct');
+                    }
+
+                    resultElement.appendChild(optionSpan);
+                    resultElement.innerHTML += '<br>';
+                });
+
+                quizContainer.appendChild(resultElement);
+            });
+
+            const resultContainer = document.createElement('div');
+            resultContainer.classList.add('result-container');
+            const scorePercentage = ((correctAnswersCount / drawnQuestions.length) * 100).toFixed(2);
+            resultContainer.innerHTML = `Twój wynik: ${correctAnswersCount}/${drawnQuestions.length} (${scorePercentage}%)`;
+            quizContainer.appendChild(resultContainer);
+
+            if (isContinuousMode && remainingQuestions.length > 0) {
+                document.getElementById('continue-btn').style.display = 'block';
+            } else {
+                quizCompleted = true;
+                document.getElementById('retry-btn').style.display = 'block';
+            }
+
+            if (isContinuousMode) {
+                const totalCorrectAnswers = allUserAnswers.reduce((total, answer, index) => {
+                    const originalQuestionIndex = Math.floor(index / questionsPerSet);
+                    const question = questions[originalQuestionIndex];
+                    return total + (answer === question.correctAnswer ? 1 : 0);
+                }, 0);
+
+                const overallContainer = document.createElement('div');
+                overallContainer.classList.add('result-overall');
+                const overallPercentage = ((totalCorrectAnswers / allUserAnswers.length) * 100).toFixed(2);
+                overallContainer.innerHTML = `Średnia: ${totalCorrectAnswers}/${allUserAnswers.length} (${overallPercentage}%)`;
+                quizContainer.appendChild(overallContainer);
+            }
+
+            document.getElementById('next-question-btn').style.display = "none";
+        }
+        
+        // Kontynuuj button - 'Przerób jednym ciągiem'
+        document.getElementById('continue-btn').addEventListener('click', () => {
+            userAnswers = [];
+            currentQuestionIndex = 0;
+            currentSet++;
+            drawnQuestions = drawQuestions(questionsPerSet);
+            showQuestion(currentQuestionIndex);
+            document.getElementById('continue-btn').style.display = 'none';
+            document.getElementById('next-question-btn').style.display = 'block';
+        });
+
+        // Start quiz 
+        function startQuiz(continuous = false) {
+            questionsPerSet = parseInt(document.getElementById('numQuestions').value);
+            totalSets = continuous ? Math.ceil(totalQuestions / questionsPerSet) : 1;
+            drawnQuestions = drawQuestions(questionsPerSet);
+            currentSet = 1;
+            currentQuestionIndex = 0;
+            allUserAnswers = [];
+            userAnswers = [];
+            remainingQuestions = [...questions];
+            isContinuousMode = continuous;
+            quizCompleted = false;
+
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('quiz-container').style.display = 'block';
+            document.getElementById('next-question-btn').style.display = 'block';
+            document.getElementById('return-menu-btn').style.display = 'block';
+            document.getElementById('continue-btn').style.display = 'none';
+            document.getElementById('retry-btn').style.display = 'none';
+
+            showQuestion(currentQuestionIndex);
+        }
+
+        // Obsługa przycisku powrotu do menu
+        document.getElementById('return-menu-btn').addEventListener('click', () => {
+            if (quizCompleted) {
+                resetToMenu();
+            } else {
+                const confirmExit = confirm("Czy na pewno chcesz opuścić quiz? Stracisz wszystkie dotychczasowe postępy.");
+                if (confirmExit) {
+                    resetToMenu();
+                }
             }
         });
 
-        paginationContainer.appendChild(prevButton);
-        paginationContainer.appendChild(nextButton);
-        quizContainer.appendChild(paginationContainer);
+        // Powrót do menu głównego
+        function resetToMenu() {
+            currentQuestionIndex = 0;
+            userAnswers = [];
+            drawnQuestions = [];
+            remainingQuestions = [...questions];
 
-        const backButton = document.createElement('button');
-        backButton.textContent = "Powrót do menu";
-        backButton.addEventListener('click', resetToMenu);
-        quizContainer.appendChild(backButton);
-    }
+            document.getElementById('menu').style.display = 'block';
+            document.getElementById('quiz-container').style.display = 'none';
+            document.getElementById('next-question-btn').style.display = 'none';
+            document.getElementById('return-menu-btn').style.display = 'none';
+            document.getElementById('continue-btn').style.display = 'none';
+            document.getElementById('retry-btn').style.display = 'none';
+        }
 
-    displayPage(currentPage);
-}
+        document.getElementById('start-quiz-btn').addEventListener('click', () => startQuiz(false));
+        document.getElementById('start-continuous-btn').addEventListener('click', () => startQuiz(true));
 
-function resetQuiz() {
-    const numQuestions = parseInt(document.getElementById('numQuestions').value);
+        // Funkcja do przeglądania pytań
+        document.getElementById('review-questions-btn').addEventListener('click', () => {
+            const quizContainer = document.getElementById('quiz-container');
+            quizContainer.innerHTML = '<h2>Przeglądaj pytania</h2>';
+            questions.forEach((question, index) => {
+                const questionElement = document.createElement('h3');
+                questionElement.textContent = `Question ${index + 1}: ${question.question}`;
+                quizContainer.appendChild(questionElement);
 
-    if (numQuestions > 0 && numQuestions <= questions.length) {
-        drawnQuestions = drawQuestions(numQuestions);
-        currentQuestionIndex = 0;
-        userAnswers = [];
-        showQuestion(currentQuestionIndex);
-        document.getElementById('next-question-btn').style.display = 'block';
-    } else {
-        alert(`Wybierz liczbę pytań od 1 do ${questions.length}`);
-    }
-}
+                question.options.forEach((option, i) => {
+                    const optionElement = document.createElement('div');
+                    optionElement.textContent = `${i + 1}: ${option}`;
+                    quizContainer.appendChild(optionElement);
+                });
+            });
+            document.getElementById('menu').style.display = 'none';
+            document.getElementById('return-menu-btn').style.display = 'block';
+        });
 
-function resetToMenu() {
-    currentQuestionIndex = 0;
-    userAnswers = [];
-    drawnQuestions = [];
-
-    document.getElementById('menu').style.display = 'block';
-    document.getElementById('quiz-container').style.display = 'none';
-    document.getElementById('next-question-btn').style.display = 'none';
-}
-
-document.getElementById('start-quiz-btn').addEventListener('click', () => {
-    const numQuestions = parseInt(document.getElementById('numQuestions').value);
-
-    if (numQuestions > 0 && numQuestions <= questions.length) {
-        drawnQuestions = drawQuestions(numQuestions);
-        currentQuestionIndex = 0;
-        userAnswers = [];
-
-        document.getElementById('menu').style.display = 'none';
-        document.getElementById('quiz-container').style.display = 'block';
-        document.getElementById('next-question-btn').style.display = 'block';
-
-        showQuestion(currentQuestionIndex);
-    } else {
-        alert(`Wybierz liczbę pytań od 1 do ${questions.length}`);
-    }
-});
-
-document.getElementById('review-questions-btn').addEventListener('click', () => {
-    document.getElementById('menu').style.display = 'none';
-    document.getElementById('quiz-container').style.display = 'block';
-
-    showReview();
-});
+        // Funkcja do resetowania quizu
+        document.getElementById('retry-btn').addEventListener('click', () => {
+            startQuiz(isContinuousMode);
+        });
