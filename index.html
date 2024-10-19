@@ -12,19 +12,19 @@
 
     <!-- Menu główne -->
     <div id="menu">
-        <h2>Rozpocznij quizz</h2>
-        <label for="numQuestions">Ilość pytań do quizu:</label>
-        <input type="number" id="numQuestions" min="1" max="10" value="3">
+        <h2>Wybierz, co chcesz zrobić:</h2>
+        <label for="numQuestions">Ilość pytań na zestaw:</label>
+        <input type="number" id="numQuestions" min="1" max="50" value="10">
         <button id="start-quiz-btn">Rozpocznij Quiz</button>
+        <button id="start-continuous-btn">Przerób jednym ciągiem</button>
         <button id="review-questions-btn">Przeglądaj pytania</button>
     </div>
 
     <!-- Kontener na quiz -->
     <div id="quiz-container"></div>
-    <button id="next-question-btn">Next</button>
-
-    <script>
-        
-    </script>
+    <button id="next-question-btn" style="display: none;">Next</button>
+    <button id="return-menu-btn" style="display: none;">Powrót do menu głównego</button>
+    <button id="continue-btn" style="display: none;">Kontynuuj</button>
+    <button id="retry-btn" style="display: none;">Spróbuj ponownie</button>
 </body>
 </html>
