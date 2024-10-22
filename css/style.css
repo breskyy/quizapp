@@ -24,9 +24,14 @@ h2 {
     color: #444;
     margin-bottom: 15px;
 }
+#content-container {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
 
 #menu, #quiz-container {
-    max-width: 600px;
+    max-width: 700px;
     margin: 0 auto;
     background: #fff;
     padding: 30px;
@@ -58,6 +63,10 @@ button {
     font-size: 16px;
     width: 100%;
     margin-top: 10px;
+}
+
+.next-question-btn {
+  max-width: 700px;
 }
 
 #start-quiz-btn {
@@ -118,6 +127,7 @@ div {
     border: none;
     border-radius: 5px;
     cursor: pointer;
+    margin: 0 5px;
 }
 
 #pagination button:hover {
