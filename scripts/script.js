@@ -1022,7 +1022,14 @@ const questions = [
 
             questionData.options.forEach((option, index) => {
                 const optionElement = document.createElement('div');
+            questionData.options.forEach((option, index) => {
+                const optionElement = document.createElement('div');
 
+                const radioButton = document.createElement('input');
+                radioButton.type = 'radio';
+                radioButton.name = 'answer';
+                radioButton.value = index;
+                radioButton.id = `option${index}`;
                 const radioButton = document.createElement('input');
                 radioButton.type = 'radio';
                 radioButton.name = 'answer';
@@ -1032,10 +1039,18 @@ const questions = [
                 const label = document.createElement('label');
                 label.htmlFor = `option${index}`;
                 label.textContent = option;
+                const label = document.createElement('label');
+                label.htmlFor = `option${index}`;
+                label.textContent = option;
 
                 optionElement.appendChild(radioButton);
                 optionElement.appendChild(label);
+                optionElement.appendChild(radioButton);
+                optionElement.appendChild(label);
 
+                quizContainer.appendChild(optionElement);
+            });
+        }
                 quizContainer.appendChild(optionElement);
             });
         }
@@ -1069,10 +1084,22 @@ const questions = [
                     const isCorrect = i === question.correctAnswer;
                     const userAnswer = userAnswers[index] === i;
                     let optionText = `${i + 1}: ${option}`;
+                question.options.forEach((option, i) => {
+                    const isCorrect = i === question.correctAnswer;
+                    const userAnswer = userAnswers[index] === i;
+                    let optionText = `${i + 1}: ${option}`;
 
                     const optionSpan = document.createElement('span');
                     optionSpan.textContent = optionText;
+                    const optionSpan = document.createElement('span');
+                    optionSpan.textContent = optionText;
 
+                    if (userAnswer && isCorrect) {
+                        optionSpan.classList.add('correct');
+                        correctAnswersCount++;
+                    } else if (userAnswer) {
+                        optionSpan.classList.add('incorrect');
+                    }
                     if (userAnswer && isCorrect) {
                         optionSpan.classList.add('correct');
                         correctAnswersCount++;
@@ -1083,11 +1110,19 @@ const questions = [
                     if (isCorrect) {
                         optionSpan.classList.add('correct');
                     }
+                    if (isCorrect) {
+                        optionSpan.classList.add('correct');
+                    }
 
                     resultElement.appendChild(optionSpan);
                     resultElement.innerHTML += '<br>';
                 });
+                    resultElement.appendChild(optionSpan);
+                    resultElement.innerHTML += '<br>';
+                });
 
+                quizContainer.appendChild(resultElement);
+            });
                 quizContainer.appendChild(resultElement);
             });
 
