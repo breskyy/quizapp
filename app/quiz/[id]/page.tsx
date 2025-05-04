@@ -20,23 +20,36 @@ export default function QuizPage({ params }: { params: { id: string } }) {
       return
     }
 
+    // Ensure the session has the questionsPerPage property
+    if (!currentSession.questionsPerPage) {
+      currentSession.questionsPerPage = 1
+    }
+
     setSession(currentSession)
     setLoading(false)
   }, [params.id, router])
 
+  // Modify the handleAnswerSelect function to prevent scrolling
   const handleAnswerSelect = (questionIndex: number, selectedOptionIndex: number) => {
     if (!session) return
 
-    const newAnswers = [...session.answers]
-    newAnswers[questionIndex] = selectedOptionIndex
+    // Use functional update to avoid potential race conditions
+    setSession((prevSession) => {
+      if (!prevSession) return null
 
-    const updatedSession = {
-      ...session,
-      answers: newAnswers,
-    }
+      const newAnswers = [...prevSession.answers]
+      newAnswers[questionIndex] = selectedOptionIndex
 
-    setSession(updatedSession)
-    saveCurrentSession(updatedSession)
+      const updatedSession = {
+        ...prevSession,
+        answers: newAnswers,
+      }
+
+      // Save to storage
+      saveCurrentSession(updatedSession)
+
+      return updatedSession
+    })
   }
 
   const handleQuizComplete = (finalSession: QuizSession) => {
@@ -67,7 +80,7 @@ export default function QuizPage({ params }: { params: { id: string } }) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-semibold mb-2">Loading quiz...</h2>
+          <h2 className="text-xl font-semibold mb-2">Ładowanie quizu...</h2>
         </div>
       </div>
     )
@@ -77,10 +90,10 @@ export default function QuizPage({ params }: { params: { id: string } }) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <h2 className="text-xl font-semibold mb-2">Quiz not found</h2>
-          <p className="text-gray-500 mb-4">The quiz you're looking for doesn't exist.</p>
+          <h2 className="text-xl font-semibold mb-2">Nie znaleziono quizu</h2>
+          <p className="text-gray-500 mb-4">Szukany quiz nie istnieje.</p>
           <button onClick={() => router.push("/")} className="px-4 py-2 bg-primary text-white rounded-md">
-            Go Home
+            Strona Główna
           </button>
         </div>
       </div>
@@ -90,7 +103,7 @@ export default function QuizPage({ params }: { params: { id: string } }) {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-gray-50 dark:bg-gray-900">
       <div className="w-full max-w-3xl">
-        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">Medical Quiz</h1>
+        <h1 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">Quiz Medyczny</h1>
 
         <QuizContainer session={session} onAnswerSelect={handleAnswerSelect} onComplete={handleQuizComplete} />
       </div>

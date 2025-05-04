@@ -23,17 +23,17 @@ export default function HistoryPage() {
         <div className="flex items-center mb-6">
           <Button variant="ghost" size="sm" onClick={() => router.push("/")} className="mr-2">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
+            Powrót
           </Button>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Recent Quizzes</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Ostatnie Quizy</h1>
         </div>
 
         {recentQuizzes.length === 0 ? (
           <Card>
             <CardContent className="pt-6 text-center">
-              <p className="text-gray-500 dark:text-gray-400">You haven't taken any quizzes yet.</p>
+              <p className="text-gray-500 dark:text-gray-400">Nie rozwiązałeś jeszcze żadnych quizów.</p>
               <Link href="/quiz/new" className="mt-4 inline-block">
-                <Button>Start Your First Quiz</Button>
+                <Button>Rozpocznij Pierwszy Quiz</Button>
               </Link>
             </CardContent>
           </Card>
@@ -50,12 +50,12 @@ export default function HistoryPage() {
                     {quiz.completed ? (
                       <div className="flex items-center text-sm font-normal">
                         <CheckCircle className="h-4 w-4 mr-1 text-green-500" />
-                        <span>Completed</span>
+                        <span>Ukończony</span>
                       </div>
                     ) : (
                       <div className="flex items-center text-sm font-normal">
                         <Clock className="h-4 w-4 mr-1 text-amber-500" />
-                        <span>In Progress</span>
+                        <span>W trakcie</span>
                       </div>
                     )}
                   </CardTitle>
@@ -63,10 +63,10 @@ export default function HistoryPage() {
                 <CardContent>
                   <div className="flex justify-between items-center mb-4">
                     <div>
-                      <p className="text-sm text-gray-500">{quiz.questions.length} questions</p>
+                      <p className="text-sm text-gray-500">{quiz.questions.length} pytań</p>
                       {quiz.completed && quiz.score !== undefined && (
                         <p className="font-medium">
-                          Score: <span className="text-primary">{quiz.score}%</span>
+                          Wynik: <span className="text-primary">{quiz.score}%</span>
                         </p>
                       )}
                     </div>
@@ -74,20 +74,20 @@ export default function HistoryPage() {
                     {quiz.completed ? (
                       <Link href={`/history/${quiz.id}`}>
                         <Button variant="outline" size="sm">
-                          View Results
+                          Zobacz Wyniki
                         </Button>
                       </Link>
                     ) : (
                       <Link href={`/quiz/${quiz.id}`}>
-                        <Button size="sm">Continue</Button>
+                        <Button size="sm">Kontynuuj</Button>
                       </Link>
                     )}
                   </div>
 
                   <div className="text-xs text-gray-500">
-                    <span>Progress: </span>
+                    <span>Postęp: </span>
                     <span>
-                      {quiz.answers.filter((a) => a !== undefined).length} of {quiz.questions.length} answered
+                      {quiz.answers.filter((a) => a !== undefined).length} z {quiz.questions.length} odpowiedziano
                     </span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1 dark:bg-gray-700">

@@ -24,21 +24,21 @@ export default function DatabasePage() {
         <div className="flex items-center mb-6">
           <Button variant="ghost" size="sm" onClick={() => router.push("/")} className="mr-2">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
+            Powrót
           </Button>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Question Database</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Baza Pytań</h1>
         </div>
 
         <Card className="mb-6">
           <CardHeader className="pb-2">
-            <CardTitle className="text-lg">Search Questions</CardTitle>
+            <CardTitle className="text-lg">Wyszukaj Pytania</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="relative">
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
               <Input
                 type="text"
-                placeholder="Search by keyword..."
+                placeholder="Szukaj według słowa kluczowego..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-9"
@@ -49,7 +49,7 @@ export default function DatabasePage() {
 
         <div className="space-y-4">
           <p className="text-sm text-gray-500">
-            Showing {filteredQuestions.length} of {quizData.length} questions
+            Pokazano {filteredQuestions.length} z {quizData.length} pytań
           </p>
 
           {filteredQuestions.map((question, index) => (
@@ -87,7 +87,7 @@ export default function DatabasePage() {
           {filteredQuestions.length === 0 && (
             <Card>
               <CardContent className="pt-6 text-center">
-                <p className="text-gray-500 dark:text-gray-400">No questions found matching your search.</p>
+                <p className="text-gray-500 dark:text-gray-400">Nie znaleziono pytań pasujących do wyszukiwania.</p>
               </CardContent>
             </Card>
           )}

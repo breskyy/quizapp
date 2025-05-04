@@ -31,7 +31,7 @@ export default function ResumeQuizCard() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <PlayCircle className="h-5 w-5 text-primary" />
-          Resume Quiz
+          Wznów Quiz
         </CardTitle>
         <CardDescription>
           You have an unfinished quiz from {new Date(currentSession.date).toLocaleDateString()}

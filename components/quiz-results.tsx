@@ -20,17 +20,17 @@ export default function QuizResults({ session, onRestartQuiz }: QuizResultsProps
 
   return (
     <Card className="p-6 shadow-lg">
-      <h2 className="text-2xl font-bold mb-4 text-center text-gray-800 dark:text-gray-100">Quiz Results</h2>
+      <h2 className="text-2xl font-bold mb-4 text-center text-gray-800 dark:text-gray-100">Wyniki Quizu</h2>
 
       <div className="text-center mb-6">
         <div className="text-5xl font-bold mb-2 text-primary">{score}%</div>
         <p className="text-gray-600 dark:text-gray-400">
-          You got {correctAnswers} out of {session.questions.length} questions correct
+          Zdobyłeś {correctAnswers} z {session.questions.length} możliwych punktów
         </p>
       </div>
 
       <div className="space-y-4 mb-6">
-        <h3 className="text-lg font-semibold border-b pb-2 text-gray-700 dark:text-gray-300">Question Summary</h3>
+        <h3 className="text-lg font-semibold border-b pb-2 text-gray-700 dark:text-gray-300">Podsumowanie Pytań</h3>
 
         {session.questions.map((question, index) => {
           const isCorrect = session.answers[index] === question.correctAnswer
@@ -49,12 +49,12 @@ export default function QuizResults({ session, onRestartQuiz }: QuizResultsProps
                   </p>
 
                   <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    Your answer: {question.options[session.answers[index]]}
+                    Twoja odpowiedź: {question.options[session.answers[index]]}
                   </p>
 
                   {!isCorrect && (
                     <p className="text-sm text-green-600 dark:text-green-400 mt-1">
-                      Correct answer: {question.options[question.correctAnswer]}
+                      Poprawna odpowiedź: {question.options[question.correctAnswer]}
                     </p>
                   )}
                 </div>
@@ -67,10 +67,10 @@ export default function QuizResults({ session, onRestartQuiz }: QuizResultsProps
       <div className="flex justify-center gap-4">
         <Button onClick={onRestartQuiz} variant="outline">
           <Home className="mr-2 h-4 w-4" />
-          Go Home
+          Strona Główna
         </Button>
         <Link href="/history">
-          <Button>View History</Button>
+          <Button>Zobacz Historię</Button>
         </Link>
       </div>
     </Card>

@@ -11,13 +11,21 @@ interface QuizQuestionProps {
 }
 
 export default function QuizQuestion({ question, selectedAnswer, onSelectAnswer }: QuizQuestionProps) {
+  // Create a wrapper function to prevent default behavior
+  const handleSelectAnswer = (index: number) => {
+    // Prevent default scrolling behavior
+    setTimeout(() => {
+      onSelectAnswer(index)
+    }, 0)
+  }
+
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-100">{question.question}</h2>
 
       <RadioGroup
         value={selectedAnswer?.toString()}
-        onValueChange={(value) => onSelectAnswer(Number.parseInt(value))}
+        onValueChange={(value) => handleSelectAnswer(Number.parseInt(value))}
         className="space-y-3"
       >
         {question.options.map((option, index) => (
@@ -28,7 +36,10 @@ export default function QuizQuestion({ question, selectedAnswer, onSelectAnswer 
                 ? "bg-gray-100 dark:bg-gray-800 border-primary"
                 : "border-gray-200 dark:border-gray-700"
             }`}
-            onClick={() => onSelectAnswer(index)}
+            onClick={(e) => {
+              e.preventDefault()
+              handleSelectAnswer(index)
+            }}
           >
             <RadioGroupItem value={index.toString()} id={`option-${index}`} className="sr-only" />
             <Label htmlFor={`option-${index}`} className="flex-grow cursor-pointer text-gray-700 dark:text-gray-300">

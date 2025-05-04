@@ -27,9 +27,9 @@ export default function StatisticsPage() {
         <div className="flex items-center mb-6">
           <Button variant="ghost" size="sm" onClick={() => router.push("/")} className="mr-2">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
+            Powrót
           </Button>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Your Statistics</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Twoje Statystyki</h1>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
@@ -37,7 +37,7 @@ export default function StatisticsPage() {
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center">
                 <BarChart2 className="h-5 w-5 mr-2 text-primary" />
-                Quizzes Taken
+                Rozwiązane Quizy
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -49,7 +49,7 @@ export default function StatisticsPage() {
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center">
                 <HelpCircle className="h-5 w-5 mr-2 text-primary" />
-                Total Questions
+                Wszystkie Pytania
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -61,7 +61,7 @@ export default function StatisticsPage() {
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center">
                 <CheckCircle className="h-5 w-5 mr-2 text-primary" />
-                Correct Answers
+                Poprawne Odpowiedzi
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -73,7 +73,7 @@ export default function StatisticsPage() {
             <CardHeader className="pb-2">
               <CardTitle className="text-lg flex items-center">
                 <Percent className="h-5 w-5 mr-2 text-primary" />
-                Average Score
+                Średni Wynik
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -86,23 +86,23 @@ export default function StatisticsPage() {
           <Card>
             <CardContent className="pt-6 text-center">
               <p className="text-gray-500 dark:text-gray-400">
-                You haven't taken any quizzes yet. Start a quiz to see your statistics.
+                Nie rozwiązałeś jeszcze żadnych quizów. Rozpocznij quiz, aby zobaczyć swoje statystyki.
               </p>
               <Button onClick={() => router.push("/quiz/new")} className="mt-4">
-                Start a Quiz
+                Rozpocznij Quiz
               </Button>
             </CardContent>
           </Card>
         ) : (
           <Card>
             <CardHeader>
-              <CardTitle>Performance Summary</CardTitle>
+              <CardTitle>Podsumowanie Wyników</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div>
                   <div className="flex justify-between text-sm mb-1">
-                    <span>Accuracy Rate</span>
+                    <span>Wskaźnik Dokładności</span>
                     <span>{((stats.correctAnswers / stats.totalQuestions) * 100).toFixed(1)}%</span>
                   </div>
                   <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
@@ -115,7 +115,7 @@ export default function StatisticsPage() {
 
                 <div className="pt-4">
                   <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Keep taking quizzes to improve your statistics and track your progress over time.
+                    Kontynuuj rozwiązywanie quizów, aby poprawić swoje statystyki i śledzić postępy.
                   </p>
                 </div>
               </div>

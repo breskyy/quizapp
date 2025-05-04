@@ -11,6 +11,7 @@ export interface QuizSession {
   answers: number[]
   completed: boolean
   score?: number
+  questionsPerPage?: number
 }
 
 export interface UserStats {
