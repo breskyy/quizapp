@@ -125,6 +125,8 @@ export default function DatabasePage() {
             <Card>
               <CardContent className="pt-6 text-center">
                 <p className="text-gray-500 dark:text-gray-400">Nie znaleziono pytań pasujących do wyszukiwania.</p>
+                {/* Placeholder image to prevent loading error */}
+                <img src="/placeholder.svg?height=100&width=200" alt="Placeholder" className="mx-auto mt-4" />
               </CardContent>
             </Card>
           )}
