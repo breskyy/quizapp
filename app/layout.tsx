@@ -5,6 +5,7 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { Toaster } from "@/components/ui/toaster"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { VersionIndicator } from "@/components/version-indicator"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -28,6 +29,7 @@ export default function RootLayout({
           </div>
           {children}
           <Toaster />
+          <VersionIndicator />
         </ThemeProvider>
       </body>
     </html>
