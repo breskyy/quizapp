@@ -51,4 +51,3 @@ export default function QuizQuestion({ question, selectedAnswer, onSelectAnswer 
     </div>
   )
 }
-

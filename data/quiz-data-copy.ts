@@ -169,4 +169,3 @@ export const quizData: Question[] = [
     correctAnswer: 0,
   },
 ]
-

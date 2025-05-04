@@ -167,4 +167,3 @@ export default function QuizContainer({ session, onAnswerSelect, onComplete }: Q
     </Card>
   )
 }
-

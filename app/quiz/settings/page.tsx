@@ -2,92 +2,117 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Label } from "@/components/ui/label"
 import { Slider } from "@/components/ui/slider"
-import { ArrowLeft } from "lucide-react"
-import { getUserSettings, saveUserSettings } from "@/utils/storage"
-import { quizData } from "@/data/quiz-data"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { getUserSettings } from "@/utils/storage"
+import { getQuestionsBySet } from "@/data/quiz-sets"
 
 export default function QuizSettingsPage() {
   const router = useRouter()
-  const [questionsPerQuiz, setQuestionsPerQuiz] = useState(10)
+  const [questionsCount, setQuestionsCount] = useState(10)
   const [questionsPerPage, setQuestionsPerPage] = useState(1)
-  const maxQuestions = quizData.length
+  const [selectedSet, setSelectedSet] = useState("all")
+  const [maxQuestions, setMaxQuestions] = useState(100)
 
   useEffect(() => {
+    // Load user settings
     const settings = getUserSettings()
-    setQuestionsPerQuiz(settings.questionsPerQuiz)
+    setQuestionsCount(settings.questionsPerQuiz)
     setQuestionsPerPage(settings.questionsPerPage)
+    setSelectedSet(settings.questionSet || "all")
+
+    // Update max questions based on selected set
+    updateMaxQuestions(settings.questionSet || "all")
   }, [])
 
-  const handleStartQuiz = () => {
-    // Save settings
-    saveUserSettings({
-      questionsPerQuiz,
-      questionsPerPage,
-    })
+  // Update max questions when set changes
+  useEffect(() => {
+    updateMaxQuestions(selectedSet)
+  }, [selectedSet])
 
-    // Navigate to new quiz
-    router.push(`/quiz/new?count=${questionsPerQuiz}&perPage=${questionsPerPage}`)
+  const updateMaxQuestions = (setId: string) => {
+    const questions = getQuestionsBySet(setId)
+    setMaxQuestions(questions.length)
+
+    // Adjust questions count if it exceeds the new maximum
+    if (questionsCount > questions.length) {
+      setQuestionsCount(questions.length)
+    }
+  }
+
+  const startQuiz = () => {
+    router.push(`/quiz/new?count=${questionsCount}&perPage=${questionsPerPage}&set=${selectedSet}`)
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center p-4 bg-gray-50 dark:bg-gray-900">
-      <div className="w-full max-w-3xl">
-        <div className="flex items-center mb-6">
-          <Button variant="ghost" size="sm" onClick={() => router.push("/")} className="mr-2">
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Powrót
-          </Button>
-          <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Ustawienia Quizu</h1>
-        </div>
-
+    <main className="container mx-auto py-6 px-4">
+      <div className="max-w-2xl mx-auto">
         <Card>
           <CardHeader>
-            <CardTitle>Dostosuj Swój Quiz</CardTitle>
+            <CardTitle>Ustawienia quizu</CardTitle>
+            <CardDescription>Dostosuj parametry quizu przed rozpoczęciem</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <Label htmlFor="questionsPerQuiz">Liczba Pytań</Label>
-                <span className="text-sm font-medium">{questionsPerQuiz}</span>
-              </div>
-              <Slider
-                id="questionsPerQuiz"
-                min={5}
-                max={Math.min(100, maxQuestions)}
-                step={1}
-                value={[questionsPerQuiz]}
-                onValueChange={(value) => setQuestionsPerQuiz(value[0])}
-              />
-              <p className="text-xs text-gray-500">Wybierz liczbę pytań w quizie (5-{Math.min(100, maxQuestions)})</p>
+            <div>
+              <h3 className="text-lg font-medium mb-2">Zestaw pytań</h3>
+              <Tabs defaultValue={selectedSet} onValueChange={setSelectedSet}>
+                <TabsList className="grid grid-cols-3 mb-2">
+                  <TabsTrigger value="all">Wszystkie pytania</TabsTrigger>
+                  <TabsTrigger value="set1">Zestaw 1</TabsTrigger>
+                  <TabsTrigger value="set2">Zestaw 2</TabsTrigger>
+                </TabsList>
+                <TabsContent value="all">
+                  <p className="text-sm text-gray-500">
+                    Pytania z obu zestawów (łącznie {getQuestionsBySet("all").length} pytań)
+                  </p>
+                </TabsContent>
+                <TabsContent value="set1">
+                  <p className="text-sm text-gray-500">
+                    Tylko pytania z pierwszego zestawu ({getQuestionsBySet("set1").length} pytań)
+                  </p>
+                </TabsContent>
+                <TabsContent value="set2">
+                  <p className="text-sm text-gray-500">
+                    Tylko pytania z drugiego zestawu ({getQuestionsBySet("set2").length} pytań)
+                  </p>
+                </TabsContent>
+              </Tabs>
             </div>
 
-            <div className="space-y-3">
-              <div className="flex justify-between">
-                <Label htmlFor="questionsPerPage">Pytań na Stronę</Label>
-                <span className="text-sm font-medium">{questionsPerPage}</span>
-              </div>
+            <div>
+              <h3 className="text-lg font-medium mb-2">Liczba pytań: {questionsCount}</h3>
               <Slider
-                id="questionsPerPage"
+                value={[questionsCount]}
+                min={5}
+                max={maxQuestions}
+                step={1}
+                onValueChange={(value) => setQuestionsCount(value[0])}
+              />
+              <p className="text-sm text-gray-500 mt-1">Wybierz liczbę pytań w quizie (od 5 do {maxQuestions})</p>
+            </div>
+
+            <div>
+              <h3 className="text-lg font-medium mb-2">Pytań na stronę: {questionsPerPage}</h3>
+              <Slider
+                value={[questionsPerPage]}
                 min={1}
                 max={5}
                 step={1}
-                value={[questionsPerPage]}
                 onValueChange={(value) => setQuestionsPerPage(value[0])}
               />
-              <p className="text-xs text-gray-500">Wybierz liczbę pytań wyświetlanych na stronie (1-5)</p>
+              <p className="text-sm text-gray-500 mt-1">Wybierz liczbę pytań wyświetlanych jednocześnie na stronie</p>
             </div>
-
-            <Button onClick={handleStartQuiz} className="w-full">
-              Rozpocznij Quiz
-            </Button>
           </CardContent>
+          <CardFooter className="flex justify-between">
+            <Button variant="outline" onClick={() => router.back()}>
+              Anuluj
+            </Button>
+            <Button onClick={startQuiz}>Rozpocznij quiz</Button>
+          </CardFooter>
         </Card>
       </div>
     </main>
   )
 }
-

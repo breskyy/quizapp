@@ -76,4 +76,3 @@ export default function QuizResults({ session, onRestartQuiz }: QuizResultsProps
     </Card>
   )
 }
-

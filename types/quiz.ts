@@ -21,3 +21,18 @@ export interface UserStats {
   averageScore: number
 }
 
+export interface UserSettings {
+  questionsPerQuiz: number
+  questionsPerPage: number
+  questionSet: string // Add this field to store the selected question set
+}
+
+export interface QuizResult {
+  totalQuestions: number
+  correctAnswers: number
+  incorrectAnswers: number
+  unansweredQuestions: number
+  score: number
+  date: string
+  timeSpent?: number
+}

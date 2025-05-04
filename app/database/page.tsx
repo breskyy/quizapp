@@ -5,14 +5,32 @@ import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { quizData } from "@/data/quiz-data"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { quizSet1, quizSet2, allQuestions } from "@/data/quiz-sets"
 import { ArrowLeft, Search } from "lucide-react"
 
 export default function DatabasePage() {
   const router = useRouter()
   const [searchTerm, setSearchTerm] = useState("")
+  const [selectedSet, setSelectedSet] = useState("all")
 
-  const filteredQuestions = quizData.filter(
+  // Get the appropriate question set based on selection
+  const getQuestionSet = () => {
+    switch (selectedSet) {
+      case "set1":
+        return quizSet1
+      case "set2":
+        return quizSet2
+      case "all":
+      default:
+        return allQuestions
+    }
+  }
+
+  const currentQuestionSet = getQuestionSet()
+
+  // Filter questions based on search term
+  const filteredQuestions = currentQuestionSet.filter(
     (question) =>
       question.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
       question.options.some((option) => option.toLowerCase().includes(searchTerm.toLowerCase())),
@@ -34,22 +52,41 @@ export default function DatabasePage() {
             <CardTitle className="text-lg">Wyszukaj Pytania</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-              <Input
-                type="text"
-                placeholder="Szukaj według słowa kluczowego..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-9"
-              />
+            <div className="space-y-4">
+              <div className="relative">
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+                <Input
+                  type="text"
+                  placeholder="Szukaj według słowa kluczowego..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+
+              <Tabs defaultValue="all" onValueChange={setSelectedSet}>
+                <TabsList className="grid w-full grid-cols-3">
+                  <TabsTrigger value="all">Wszystkie pytania</TabsTrigger>
+                  <TabsTrigger value="set1">Zestaw 1</TabsTrigger>
+                  <TabsTrigger value="set2">Zestaw 2</TabsTrigger>
+                </TabsList>
+                <TabsContent value="all">
+                  <p className="text-sm text-gray-500">Wyświetlanie wszystkich pytań ({allQuestions.length})</p>
+                </TabsContent>
+                <TabsContent value="set1">
+                  <p className="text-sm text-gray-500">Wyświetlanie pytań z zestawu 1 ({quizSet1.length})</p>
+                </TabsContent>
+                <TabsContent value="set2">
+                  <p className="text-sm text-gray-500">Wyświetlanie pytań z zestawu 2 ({quizSet2.length})</p>
+                </TabsContent>
+              </Tabs>
             </div>
           </CardContent>
         </Card>
 
         <div className="space-y-4">
           <p className="text-sm text-gray-500">
-            Pokazano {filteredQuestions.length} z {quizData.length} pytań
+            Pokazano {filteredQuestions.length} z {currentQuestionSet.length} pytań
           </p>
 
           {filteredQuestions.map((question, index) => (
@@ -96,4 +133,3 @@ export default function DatabasePage() {
     </main>
   )
 }
-

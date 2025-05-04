@@ -66,4 +66,3 @@ export default function QuizHistoryPage({ params }: { params: { id: string } }) 
     </main>
   )
 }
-

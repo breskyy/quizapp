@@ -1002,4 +1002,3 @@ export const quizData: Question[] = [
         "correctAnswer": 1
     }
 ]
-
