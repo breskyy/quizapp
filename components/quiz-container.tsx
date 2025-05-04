@@ -1,29 +1,37 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
+import type { QuizSession } from "@/types/quiz"
 import QuizQuestion from "./quiz-question"
 import QuizResults from "./quiz-results"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { quizData } from "@/data/quiz-data"
 
-export default function QuizContainer() {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [answers, setAnswers] = useState<number[]>([])
-  const [quizCompleted, setQuizCompleted] = useState(false)
-  const [showResults, setShowResults] = useState(false)
+interface QuizContainerProps {
+  session: QuizSession
+  onAnswerSelect: (questionIndex: number, selectedOptionIndex: number) => void
+  onComplete: (session: QuizSession) => void
+}
 
-  const handleAnswerSelect = (selectedOptionIndex: number) => {
-    const newAnswers = [...answers]
-    newAnswers[currentQuestionIndex] = selectedOptionIndex
-    setAnswers(newAnswers)
-  }
+export default function QuizContainer({ session, onAnswerSelect, onComplete }: QuizContainerProps) {
+  const router = useRouter()
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(
+    // Start at the first unanswered question or 0
+    session.answers.findIndex((a) => a === undefined) !== -1 ? session.answers.findIndex((a) => a === undefined) : 0,
+  )
+  const [showResults, setShowResults] = useState(session.completed)
 
   const handleNext = () => {
-    if (currentQuestionIndex < quizData.length - 1) {
+    if (currentQuestionIndex < session.questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1)
     } else {
-      setQuizCompleted(true)
+      // If all questions are answered, show completion button
+      const allAnswered = session.answers.every((a) => a !== undefined)
+      if (allAnswered && !session.completed) {
+        onComplete(session)
+        setShowResults(true)
+      }
     }
   }
 
@@ -33,33 +41,39 @@ export default function QuizContainer() {
     }
   }
 
-  const handleSubmit = () => {
-    setShowResults(true)
-  }
-
   const handleRestartQuiz = () => {
-    setCurrentQuestionIndex(0)
-    setAnswers([])
-    setQuizCompleted(false)
-    setShowResults(false)
+    router.push("/")
   }
 
   if (showResults) {
-    return <QuizResults answers={answers} quizData={quizData} onRestartQuiz={handleRestartQuiz} />
+    return <QuizResults session={session} onRestartQuiz={handleRestartQuiz} />
   }
 
-  const currentQuestion = quizData[currentQuestionIndex]
-  const selectedAnswer = answers[currentQuestionIndex]
+  const currentQuestion = session.questions[currentQuestionIndex]
+  const selectedAnswer = session.answers[currentQuestionIndex]
   const isAnswered = selectedAnswer !== undefined
-  const isLastQuestion = currentQuestionIndex === quizData.length - 1
+  const isLastQuestion = currentQuestionIndex === session.questions.length - 1
+
+  // Check if all questions are answered
+  const allAnswered = session.answers.every((a) => a !== undefined)
 
   return (
     <Card className="p-6 shadow-lg">
-      <div className="mb-4 text-sm font-medium text-gray-500 dark:text-gray-400">
-        Question {currentQuestionIndex + 1} of {quizData.length}
+      <div className="flex justify-between mb-4">
+        <div className="text-sm font-medium text-gray-500 dark:text-gray-400">
+          Question {currentQuestionIndex + 1} of {session.questions.length}
+        </div>
+
+        <div className="text-sm font-medium">
+          {session.answers.filter((a) => a !== undefined).length} of {session.questions.length} answered
+        </div>
       </div>
 
-      <QuizQuestion question={currentQuestion} selectedAnswer={selectedAnswer} onSelectAnswer={handleAnswerSelect} />
+      <QuizQuestion
+        question={currentQuestion}
+        selectedAnswer={selectedAnswer}
+        onSelectAnswer={(index) => onAnswerSelect(currentQuestionIndex, index)}
+      />
 
       <div className="flex justify-between mt-6">
         <Button variant="outline" onClick={handlePrevious} disabled={currentQuestionIndex === 0}>
@@ -67,13 +81,18 @@ export default function QuizContainer() {
         </Button>
 
         <div className="flex gap-2">
-          {quizCompleted ? (
-            <Button onClick={handleSubmit} disabled={!isAnswered}>
-              Show Results
+          {isLastQuestion && allAnswered ? (
+            <Button
+              onClick={() => {
+                onComplete(session)
+                setShowResults(true)
+              }}
+            >
+              Finish Quiz
             </Button>
           ) : (
             <Button onClick={handleNext} disabled={!isAnswered}>
-              {isLastQuestion ? "Finish" : "Next"}
+              Next
             </Button>
           )}
         </div>
