@@ -31,6 +31,7 @@ export default function NewQuizPage() {
       answers: Array(selectedQuestions.length).fill(undefined),
       completed: false,
       questionsPerPage: perPage,
+      questionSet: set, // Zapisujemy informację o zestawie pytań
     }
 
     // Save to local storage

@@ -4,12 +4,14 @@ import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { getUserStats } from "@/utils/storage"
-import type { UserStats } from "@/types/quiz"
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { getRecentQuizzes } from "@/utils/storage"
+import type { UserStats, QuizSession } from "@/types/quiz"
 import { ArrowLeft, BarChart2, CheckCircle, HelpCircle, Percent } from "lucide-react"
 
 export default function StatisticsPage() {
   const router = useRouter()
+  const [selectedFilter, setSelectedFilter] = useState("all")
   const [stats, setStats] = useState<UserStats>({
     totalQuizzes: 0,
     totalQuestions: 0,
@@ -18,8 +20,44 @@ export default function StatisticsPage() {
   })
 
   useEffect(() => {
-    setStats(getUserStats())
-  }, [])
+    // Pobierz wszystkie quizy
+    const quizzes = getRecentQuizzes()
+
+    // Filtruj quizy na podstawie wybranego zestawu
+    const filteredQuizzes = quizzes.filter((quiz) => {
+      if (selectedFilter === "all") return true
+      return quiz.questionSet === selectedFilter
+    })
+
+    // Oblicz statystyki dla przefiltrowanych quizów
+    const calculatedStats = calculateStats(filteredQuizzes)
+    setStats(calculatedStats)
+  }, [selectedFilter])
+
+  // Funkcja do obliczania statystyk na podstawie quizów
+  const calculateStats = (quizzes: QuizSession[]): UserStats => {
+    const totalQuizzes = quizzes.length
+    let totalQuestions = 0
+    let correctAnswers = 0
+
+    quizzes.forEach((quiz) => {
+      totalQuestions += quiz.questions.length
+      quiz.questions.forEach((question, index) => {
+        if (quiz.answers[index] === question.correctAnswer) {
+          correctAnswers++
+        }
+      })
+    })
+
+    const averageScore = totalQuizzes > 0 ? (correctAnswers / totalQuestions) * 100 : 0
+
+    return {
+      totalQuizzes,
+      totalQuestions,
+      correctAnswers,
+      averageScore,
+    }
+  }
 
   return (
     <main className="flex min-h-screen flex-col items-center p-4 bg-gray-50 dark:bg-gray-900">
@@ -31,6 +69,18 @@ export default function StatisticsPage() {
           </Button>
           <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Twoje Statystyki</h1>
         </div>
+
+        <Card className="mb-6">
+          <CardContent className="pt-6">
+            <Tabs defaultValue="all" onValueChange={setSelectedFilter}>
+              <TabsList className="grid w-full grid-cols-3">
+                <TabsTrigger value="all">Wszystkie</TabsTrigger>
+                <TabsTrigger value="set1">Zestaw 1</TabsTrigger>
+                <TabsTrigger value="set2">Zestaw 2</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </CardContent>
+        </Card>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           <Card>

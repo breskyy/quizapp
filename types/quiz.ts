@@ -12,6 +12,7 @@ export interface QuizSession {
   completed: boolean
   score?: number
   questionsPerPage?: number
+  questionSet: string // Dodane pole informujące o zestawie pytań
 }
 
 export interface UserStats {
@@ -24,7 +25,7 @@ export interface UserStats {
 export interface UserSettings {
   questionsPerQuiz: number
   questionsPerPage: number
-  questionSet: string // Add this field to store the selected question set
+  questionSet: string
 }
 
 export interface QuizResult {

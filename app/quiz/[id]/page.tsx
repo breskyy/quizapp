@@ -25,6 +25,11 @@ export default function QuizPage({ params }: { params: { id: string } }) {
       currentSession.questionsPerPage = 1
     }
 
+    // Ensure the session has the questionSet property
+    if (!currentSession.questionSet) {
+      currentSession.questionSet = "all"
+    }
+
     setSession(currentSession)
     setLoading(false)
   }, [params.id, router])
@@ -76,6 +81,16 @@ export default function QuizPage({ params }: { params: { id: string } }) {
     setSession(completedSession)
   }
 
+  // Funkcja do zapisania i wyjścia z quizu
+  const handleSaveAndExit = () => {
+    if (session) {
+      // Zapisz aktualny stan quizu
+      saveCurrentSession(session)
+      // Przekieruj na stronę główną
+      router.push("/")
+    }
+  }
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -105,7 +120,12 @@ export default function QuizPage({ params }: { params: { id: string } }) {
       <div className="w-full max-w-3xl">
         <h1 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">Quiz Medyczny</h1>
 
-        <QuizContainer session={session} onAnswerSelect={handleAnswerSelect} onComplete={handleQuizComplete} />
+        <QuizContainer
+          session={session}
+          onAnswerSelect={handleAnswerSelect}
+          onComplete={handleQuizComplete}
+          onSaveAndExit={handleSaveAndExit}
+        />
       </div>
     </main>
   )
